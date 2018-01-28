@@ -11,11 +11,11 @@ import java.util.TreeMap;
  */
 
 public final class BencodeReader {
-    private static final char NUMBER_PREFIX = 'i';
-    private static final char LIST_PREFIX = 'l';
-    private static final char MAP_PREFIX = 'd';
-    private static final char END_SUFFIX = 'e';
-    private static final char BYTE_ARRAY_LENGTH_DELIMITER = ':';
+    static final char NUMBER_PREFIX = 'i';
+    static final char LIST_PREFIX = 'l';
+    static final char MAP_PREFIX = 'd';
+    static final char END_SUFFIX = 'e';
+    static final char BYTE_ARRAY_LENGTH_DELIMITER = ':';
 
     public static Object read(String filename) {
         return read(new File(filename));
@@ -35,13 +35,13 @@ public final class BencodeReader {
 
     public static Object read(InputStream is) {
         try(PushbackInputStream pis = new PushbackInputStream(is)) {
-            return readNextElement(pis);
+            return readNext(pis);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private static Object readNextElement(PushbackInputStream pis) throws IOException {
+    private static Object readNext(PushbackInputStream pis) throws IOException {
         int nextByte = pis.read();
         if (nextByte == NUMBER_PREFIX) {
             return readNumber(pis);
@@ -87,7 +87,7 @@ public final class BencodeReader {
     private static List<Object> readList(PushbackInputStream pis) throws IOException {
         List<Object> list = new LinkedList<>();
         Object item;
-        while ((item = readNextElement(pis)) != null) {
+        while ((item = readNext(pis)) != null) {
             list.add(item);
         }
         return list;
@@ -97,7 +97,7 @@ public final class BencodeReader {
         Map<String, Object> map = new TreeMap<>();
         byte[] key;
         Object value;
-        while ((key = (byte[]) readNextElement(pis)) != null && (value = readNextElement(pis)) != null) {
+        while ((key = (byte[]) readNext(pis)) != null && (value = readNext(pis)) != null) {
             map.put(new String(key), value);
         }
         return map;

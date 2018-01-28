@@ -30,6 +30,14 @@ public class BencodeReaderTest {
     }
 
     @Test
+    public void readBencodeEmptyByteArray() {
+        Object readData = BencodeReader.read("0:".getBytes());
+        Assert.assertFalse(readData == null);
+        Assert.assertTrue(readData instanceof byte[]);
+        Assert.assertTrue(Arrays.equals((byte[]) readData, new byte[0]));
+    }
+
+    @Test
     public void readBencodeByteArray() {
         Object readData = BencodeReader.read("11:Test string".getBytes());
         Assert.assertFalse(readData == null);
