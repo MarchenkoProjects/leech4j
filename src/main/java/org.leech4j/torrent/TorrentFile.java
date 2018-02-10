@@ -9,6 +9,7 @@ import java.util.List;
  */
 
 public class TorrentFile {
+    public static final String BYTE_ENCODING = "ISO-8859-1";
 
     private final List<TrackerUrl> trackers;
     private final List<SharedFile> files;

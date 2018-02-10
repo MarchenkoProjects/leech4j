@@ -1,7 +1,11 @@
 package org.leech4j.torrent;
 
+import java.net.InetSocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import static java.lang.Integer.compare;
-import static org.leech4j.torrent.TrackerUrl.ProtocolType.getProtocolByUrl;
+import static org.leech4j.torrent.TrackerUrl.ProtocolType.valueOf;
 
 /**
  * @author Oleg Marchenko
@@ -9,16 +13,24 @@ import static org.leech4j.torrent.TrackerUrl.ProtocolType.getProtocolByUrl;
 
 public class TrackerUrl implements Comparable<TrackerUrl> {
 
-    private final String url;
+    private final URI url;
     private final ProtocolType protocol;
 
     public TrackerUrl(String url) {
-        this.url = url;
-        this.protocol = getProtocolByUrl(url);
+        try {
+            this.url = new URI(url);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e);
+        }
+        this.protocol = valueOf(this.url);
     }
 
     public String getUrl() {
-        return url;
+        return url.toString();
+    }
+
+    public InetSocketAddress getAddress() {
+        return new InetSocketAddress(url.getHost(), url.getPort());
     }
 
     public ProtocolType getProtocol() {
@@ -51,14 +63,15 @@ public class TrackerUrl implements Comparable<TrackerUrl> {
             return priority;
         }
 
-        public static ProtocolType getProtocolByUrl(String url) {
-            if (url.startsWith("http")) {
-                return HTTP;
+        public static ProtocolType valueOf(URI url) {
+            switch (url.getScheme()) {
+                case "http":
+                    return HTTP;
+                case "udp":
+                    return UDP;
+                default:
+                    return UNKNOWN;
             }
-            if (url.startsWith("udp")) {
-                return UDP;
-            }
-            return UNKNOWN;
         }
     }
 }
