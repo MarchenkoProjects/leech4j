@@ -1,8 +1,8 @@
-package org.leech4j.announce;
+package org.leech4j.announce.http;
 
-import org.leech4j.announce.message.request.AnnounceRequest;
-import org.leech4j.announce.message.response.AnnounceHttpResponse;
-import org.leech4j.announce.message.response.AnnounceResponse;
+import org.leech4j.announce.AnnounceRequest;
+import org.leech4j.announce.AnnounceResponse;
+import org.leech4j.announce.AnnounceTrackerTask;
 import org.leech4j.torrent.TorrentFile;
 
 import java.io.IOException;
@@ -16,14 +16,14 @@ import java.net.URLEncoder;
  * @author Oleg Marchenko
  */
 
-final class AnnounceHttpTrackerTask extends AnnounceTrackerTask {
+public final class AnnounceHttpTrackerTask extends AnnounceTrackerTask {
 
     private final String trackerUrl;
-    private final AnnounceRequest request;
+    private final AnnounceHttpRequest request;
 
-    AnnounceHttpTrackerTask(String trackerUrl, AnnounceRequest request) {
+    public AnnounceHttpTrackerTask(String trackerUrl, AnnounceRequest request) {
         this.trackerUrl = trackerUrl;
-        this.request = request;
+        this.request = new AnnounceHttpRequest(request);
     }
 
     @Override

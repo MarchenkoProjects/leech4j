@@ -1,7 +1,7 @@
 package org.leech4j.announce;
 
-import org.leech4j.announce.message.request.AnnounceRequest;
-import org.leech4j.announce.message.response.AnnounceResponse;
+import org.leech4j.announce.http.AnnounceHttpTrackerTask;
+import org.leech4j.announce.udp.AnnounceUdpTrackerTask;
 import org.leech4j.torrent.TrackerUrl;
 
 import java.util.concurrent.Callable;
@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
 
 public abstract class AnnounceTrackerTask implements Callable<AnnounceResponse> {
 
-    AnnounceTrackerTask() {
+    protected AnnounceTrackerTask() {
     }
 
     @Override
@@ -26,6 +26,8 @@ public abstract class AnnounceTrackerTask implements Callable<AnnounceResponse> 
         switch (trackerUrl.getProtocol()) {
             case HTTP:
                 return new AnnounceHttpTrackerTask(trackerUrl.getUrl(), request);
+            case UDP:
+                return new AnnounceUdpTrackerTask(trackerUrl.getAddress(), request);
             default:
                 throw new IllegalArgumentException("Unknown tracker protocol");
         }

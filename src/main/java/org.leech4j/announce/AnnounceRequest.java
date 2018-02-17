@@ -1,6 +1,6 @@
-package org.leech4j.announce.message.request;
+package org.leech4j.announce;
 
-import static org.leech4j.announce.message.request.AnnounceRequest.Event.STARTED;
+import static org.leech4j.announce.AnnounceRequest.Event.STARTED;
 
 /**
  * @author Oleg Marchenko
@@ -9,17 +9,27 @@ import static org.leech4j.announce.message.request.AnnounceRequest.Event.STARTED
 public class AnnounceRequest {
     public static final int DEFAULT_NUM_WANT = 50;
 
-    private byte[] infoHash;
-    private byte[] clientId;
-    private int port;
-    private long downloaded;
-    private long uploaded;
-    private long left;
-    private boolean compact = true;
-    private Event event = STARTED;
-    private int numWant = DEFAULT_NUM_WANT;
+    protected byte[] infoHash;
+    protected byte[] clientId;
+    protected int port;
+    protected long downloaded;
+    protected long uploaded;
+    protected long left;
+    protected Event event = STARTED;
+    protected int numWant = DEFAULT_NUM_WANT;
 
     private AnnounceRequest() {
+    }
+
+    protected AnnounceRequest(AnnounceRequest request) {
+        this.infoHash = request.infoHash;
+        this.clientId = request.clientId;
+        this.port = request.port;
+        this.downloaded = request.downloaded;
+        this.uploaded = request.uploaded;
+        this.left = request.left;
+        this.event = request.event;
+        this.numWant = request.numWant;
     }
 
     public byte[] getInfoHash() {
@@ -46,10 +56,6 @@ public class AnnounceRequest {
         return left;
     }
 
-    public boolean isCompact() {
-        return compact;
-    }
-
     public Event getEvent() {
         return event;
     }
@@ -59,7 +65,6 @@ public class AnnounceRequest {
     }
 
     public enum Event {
-
         NONE(0),
         COMPLETED(1),
         STARTED(2),
@@ -119,11 +124,6 @@ public class AnnounceRequest {
 
         public Builder setNumWant(int numWant) {
             AnnounceRequest.this.numWant = numWant;
-            return this;
-        }
-
-        public Builder setCompact(boolean compact) {
-            AnnounceRequest.this.compact = compact;
             return this;
         }
 

@@ -1,5 +1,6 @@
-package org.leech4j.announce.message.response;
+package org.leech4j.announce.http;
 
+import org.leech4j.announce.AnnounceResponse;
 import org.leech4j.bencode.BencodeReader;
 import org.leech4j.peer.Peer;
 import org.leech4j.util.IpAddressUtils;
@@ -14,41 +15,17 @@ import java.util.Map;
  * @author Oleg Marchenko
  */
 
-public class AnnounceResponse {
+class AnnounceHttpResponse extends AnnounceResponse {
 
-    private final int interval;
-    private final int incomplete;
-    private final int complete;
-    private final List<Peer> peers;
-
-    private AnnounceResponse(int interval, int incomplete, int complete, List<Peer> peers) {
-        this.interval = interval;
-        this.incomplete = incomplete;
-        this.complete = complete;
-        this.peers = peers;
-    }
-
-    public int getInterval() {
-        return interval;
-    }
-
-    public int getIncomplete() {
-        return incomplete;
-    }
-
-    public int getComplete() {
-        return complete;
-    }
-
-    public List<Peer> getPeers() {
-        return peers;
+    private AnnounceHttpResponse(int interval, int incomplete, int complete, List<Peer> peers) {
+        super(interval, incomplete, complete, peers);
     }
 
     @SuppressWarnings("unchecked")
-    public static AnnounceResponse parse(InputStream is) {
+    public static AnnounceHttpResponse parse(InputStream is) {
         Object bencodeResponse = BencodeReader.read(is);
         if (!(bencodeResponse instanceof Map)) {
-            throw new IllegalStateException("Invalid tracker response");
+            throw new IllegalStateException("Invalid HTTP tracker response");
         }
 
         Map<String, Object> trackerResponse = (Map<String, Object>) bencodeResponse;
@@ -70,11 +47,11 @@ public class AnnounceResponse {
                 int port = IpAddressUtils.alignPort(peerListBuffer.getShort());
                 peers.add(new Peer(ip, port));
             }
-            return new AnnounceResponse(interval, incomplete, complete, peers);
+            return new AnnounceHttpResponse(interval, incomplete, complete, peers);
         }
         if (peerList instanceof Map) {
             throw new UnsupportedOperationException("Response contains a list of users in a not compact form");
         }
-        throw new IllegalStateException("Cannot parse tracker response");
+        throw new IllegalStateException("Cannot parse HTTP tracker response");
     }
 }
